@@ -15,4 +15,26 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Style for a label in the editor -->
+    <style name="LabelStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:paddingBottom">@dimen/label_padding</item>
+        <item name="android:paddingTop">@dimen/label_padding</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Medium</item>
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <!-- Style for a unit of the edit field -->
+    <style name="UnitStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:paddingRight">@dimen/standard_app_padding_margin</item>
+        <item name="android:paddingTop">@dimen/standard_app_padding_margin</item>
+    </style>
+
 </resources>
