@@ -13,4 +13,6 @@
     <string name="quantity_unit">Unit(s)</string>
     <string name="suppliers_phone_number">Phone number</string>
     <string name="supplier_label">Supplier</string>
+    <string name="table_contains">Products table contains</string>
+    <string name="products">products.\n\n</string>
 </resources>

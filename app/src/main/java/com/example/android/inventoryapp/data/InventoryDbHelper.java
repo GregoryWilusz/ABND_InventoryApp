@@ -22,7 +22,7 @@ public class InventoryDbHelper extends SQLiteOpenHelper{
                     ProductEntry.COLUMN_PRODUCT_PRICE + " INTEGER NOT NULL, " +
                     ProductEntry.COLUMN_PRODUCT_QUANTITY + " INTEGER DEFAULT 0, " +
                     ProductEntry.COLUMN_SUPPLIER_NAME + " TEXT NOT NULL, " +
-                    ProductEntry.COLUMN_SUPPLIER_NAME + " INTEGER NOT NULL);";
+                    ProductEntry.COLUMN_SUPPLIER_PHONE + " INTEGER NOT NULL);";
     private static final String SQL_DELETE_QUERIES =
             "DROP TABLE IF EXISTS " + ProductEntry.TABLE_NAME;
 
