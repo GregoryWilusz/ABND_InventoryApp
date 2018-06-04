@@ -1,11 +1,13 @@
 package com.example.android.inventoryapp;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,7 +88,7 @@ public class InventoryActivity extends AppCompatActivity {
                 double currentProductPrice = cursor.getDouble(productPriceColumnIndex);
                 int currentProductQuantity = cursor.getInt(productQuantityColumnIndex);
                 String currentSupplierName = cursor.getString(supplierNameColumnIndex);
-                int currentSupplierPhone = cursor.getInt(supplierPhoneColumnIndex);
+                String currentSupplierPhone = cursor.getString(supplierPhoneColumnIndex);
 
                 dataBaseInfoTextView.append("\n" + currentId + " - " +
                         currentProductName + " - " +
@@ -98,6 +100,24 @@ public class InventoryActivity extends AppCompatActivity {
         } finally {
             cursor.close();
         }
+    }
+
+    private void insertDummyProduct() {
+        SQLiteDatabase db = mInventoryDbHelper.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+
+        values.put(ProductEntry.COLUMN_PRODUCT_NAME, "iPhone 5s");
+        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, 123.5);
+        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, 100);
+        values.put(ProductEntry.COLUMN_SUPPLIER_NAME, "Apple");
+        values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, "123-456-7890");
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId = db.insert(ProductEntry.TABLE_NAME, null, values);
+
+        Log.v("InventoryActivity", "New row ID: " + newRowId);
     }
 
     @Override
@@ -122,7 +142,7 @@ public class InventoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_insert_dummy_product:
-                // insertDummyProduct()
+                insertDummyProduct();
                 displayDatabaseInfo();
         }
         return super.onOptionsItemSelected(item);
