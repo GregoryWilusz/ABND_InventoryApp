@@ -24,7 +24,7 @@ import butterknife.OnClick;
 public class InventoryActivity extends AppCompatActivity {
 
     @BindView(R.id.fab_add_inventory_item) FloatingActionButton fab;
-    @BindView(R.id.text_view_inventory) TextView dataBaseInfoTextView;
+    //@BindView(R.id.text_view_inventory) TextView dataBaseInfoTextView;
 
     private InventoryDbHelper mInventoryDbHelper;
 
@@ -64,13 +64,13 @@ public class InventoryActivity extends AppCompatActivity {
 
         try {
             // Create a table's number of records title and the header.
-            dataBaseInfoTextView.setText(String.format("%s %d %s", getString(R.string.table_contains), cursor.getCount(), getString(R.string.products)));
-            dataBaseInfoTextView.append(ProductEntry._ID + " - " +
-            ProductEntry.COLUMN_PRODUCT_NAME + " - " +
-            ProductEntry.COLUMN_PRODUCT_PRICE + " - " +
-            ProductEntry.COLUMN_PRODUCT_QUANTITY + " - " +
-            ProductEntry.COLUMN_SUPPLIER_NAME + " - " +
-            ProductEntry.COLUMN_SUPPLIER_PHONE + "\n");
+//            dataBaseInfoTextView.setText(String.format("%s %d %s", getString(R.string.table_contains), cursor.getCount(), getString(R.string.products)));
+//            dataBaseInfoTextView.append(ProductEntry._ID + " - " +
+//            ProductEntry.COLUMN_PRODUCT_NAME + " - " +
+//            ProductEntry.COLUMN_PRODUCT_PRICE + " - " +
+//            ProductEntry.COLUMN_PRODUCT_QUANTITY + " - " +
+//            ProductEntry.COLUMN_SUPPLIER_NAME + " - " +
+//            ProductEntry.COLUMN_SUPPLIER_PHONE + "\n");
 
             // Match the index of each column
             int idColumnIndex = cursor.getColumnIndex(ProductEntry._ID);
@@ -89,12 +89,12 @@ public class InventoryActivity extends AppCompatActivity {
                 String currentSupplierName = cursor.getString(supplierNameColumnIndex);
                 String currentSupplierPhone = cursor.getString(supplierPhoneColumnIndex);
 
-                dataBaseInfoTextView.append("\n" + currentId + " - " +
-                        currentProductName + " - " +
-                        currentProductPrice + " - " +
-                        currentProductQuantity + " - " +
-                        currentSupplierName + " - " +
-                        currentSupplierPhone);
+//                dataBaseInfoTextView.append("\n" + currentId + " - " +
+//                        currentProductName + " - " +
+//                        currentProductPrice + " - " +
+//                        currentProductQuantity + " - " +
+//                        currentSupplierName + " - " +
+//                        currentSupplierPhone);
             }
         } finally {
             cursor.close();

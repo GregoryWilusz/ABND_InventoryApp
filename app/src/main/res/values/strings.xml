@@ -15,4 +15,10 @@
     <string name="supplier_label">Supplier</string>
     <string name="table_contains">Products table contains</string>
     <string name="products">products.\n\n</string>
+
+    <!-- Title text for the empty view, which explains situation met by the user [CHAR LIMIT=50] -->
+    <string name="empty_view_title_text">There are no products added yet.</string>
+
+    <!-- Subtitle text for the empty view that prompts the user to add a product [CHAR LIMIT=50] -->
+    <string name="empty_view_subtitle_text">Click on the "plus" button and get started by adding product.</string>
 </resources>

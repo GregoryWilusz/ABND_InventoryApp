@@ -25,11 +25,11 @@ public final class InventoryContract {
         public static final String TABLE_NAME = "products";
 
         public static final String _ID = BaseColumns._ID;
-        public static final String COLUMN_PRODUCT_NAME = "pName";
-        public static final String COLUMN_PRODUCT_PRICE = "pPrice";
-        public static final String COLUMN_PRODUCT_QUANTITY = "pQuant";
-        public static final String COLUMN_SUPPLIER_NAME = "supName";
-        public static final String COLUMN_SUPPLIER_PHONE = "supPhone";
+        public static final String COLUMN_PRODUCT_NAME = "productName";
+        public static final String COLUMN_PRODUCT_PRICE = "productPrice";
+        public static final String COLUMN_PRODUCT_QUANTITY = "productQuantity";
+        public static final String COLUMN_SUPPLIER_NAME = "supplierName";
+        public static final String COLUMN_SUPPLIER_PHONE = "supplierPhone";
 
     }
 }
