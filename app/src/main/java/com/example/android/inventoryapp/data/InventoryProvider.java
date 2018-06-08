@@ -11,6 +11,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by grzegorzwilusz on 6/7/18.
@@ -70,12 +72,61 @@ public class InventoryProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case PRODUCTS:
+                return insertProduct(uri, values);
+            default:
+                throw new IllegalArgumentException("Insertion not supported for " + uri);
+        }
+    }
+
+    private Uri insertProduct(Uri uri, ContentValues values) {
+
+        String productName = values.getAsString(ProductEntry.COLUMN_PRODUCT_NAME);
+        float productPrice = values.getAsFloat(ProductEntry.COLUMN_PRODUCT_PRICE);
+        Integer productQuantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
+        String supplierName = values.getAsString(ProductEntry.COLUMN_SUPPLIER_NAME);
+        String supplierPhone = values.getAsString(ProductEntry.COLUMN_SUPPLIER_PHONE);
+
+        SQLiteDatabase database = mInventoryDbHelper.getWritableDatabase();
+
+        long id = database.insert(ProductEntry.TABLE_NAME, null, values);
+
+        if (id == -1) {
+            Log.e(LOG_TAG, "Failed to insert row " + uri);
+            return null;
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase database = mInventoryDbHelper.getWritableDatabase();
+
+        int rowsDeleted;
+
+        final int match = sUriMatcher.match(uri);
+        switch (match) {
+            case PRODUCTS:
+                rowsDeleted = database.delete(ProductEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case PRODUCT_ID:
+                selection = ProductEntry._ID + "=?";
+                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = database.delete(ProductEntry.TABLE_NAME, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Delete not provided for uri " + uri);
+        }
+
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsDeleted;
     }
 
     @Override

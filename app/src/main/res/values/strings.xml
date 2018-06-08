@@ -2,6 +2,7 @@
     <string name="app_name">Inventory App</string>
     <string name="app_main_label">Inventory</string>
     <string name="action_insert_dummy_product">Add dummy product</string>
+    <string name="action_delete_all_products">Delete all product</string>
     <string name="save_product">Save</string>
     <string name="delete_product">Delete product</string>
     <string name="add_product_label">Add new product</string>
@@ -21,4 +22,5 @@
 
     <!-- Subtitle text for the empty view that prompts the user to add a product [CHAR LIMIT=50] -->
     <string name="empty_view_subtitle_text">Click on the "plus" button and get started by adding product.</string>
+    <string name="action_delete_all_entries">Deleted all products</string>
 </resources>

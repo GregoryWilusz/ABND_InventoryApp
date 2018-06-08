@@ -10,4 +10,10 @@
         app:showAsAction="never">
     </item>
 
+    <item
+        android:id="@+id/action_delete_all_products"
+        android:title="@string/action_delete_all_products"
+        app:showAsAction="never">
+    </item>
+
 </menu>

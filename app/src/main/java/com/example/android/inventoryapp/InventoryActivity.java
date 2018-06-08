@@ -1,9 +1,13 @@
 package com.example.android.inventoryapp;
 
+import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,22 +15,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.inventoryapp.data.InventoryContract.ProductEntry;
-import com.example.android.inventoryapp.data.InventoryDbHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class InventoryActivity extends AppCompatActivity {
+public class InventoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     @BindView(R.id.fab_add_inventory_item) FloatingActionButton fab;
-    //@BindView(R.id.text_view_inventory) TextView dataBaseInfoTextView;
+    @BindView(R.id.list_view) ListView productListView;
+    @BindView(R.id.empty_view) View emptyView;
 
-    private InventoryDbHelper mInventoryDbHelper;
+    private static final int PET_LOADER = 0;
+    ProductCursorAdapter mProductCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,74 +43,27 @@ public class InventoryActivity extends AppCompatActivity {
 
         // To access our database, we instantiate our subclass of SQLiteOpenHelper
         // and pass the context, which is the current activity.
-        mInventoryDbHelper = new InventoryDbHelper(this);
 
-        displayDatabaseInfo();
-    }
+        productListView.setEmptyView(emptyView);
+        mProductCursorAdapter = new ProductCursorAdapter(this, null);
+        productListView.setAdapter(mProductCursorAdapter);
 
-    private void displayDatabaseInfo() {
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mInventoryDbHelper.getReadableDatabase();
+        productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent editProductIntent = new Intent(InventoryActivity.this, AddProductActivity.class);
 
-        String[] projection = {
-                ProductEntry._ID,
-                ProductEntry.COLUMN_PRODUCT_NAME,
-                ProductEntry.COLUMN_PRODUCT_PRICE,
-                ProductEntry.COLUMN_PRODUCT_QUANTITY,
-                ProductEntry.COLUMN_SUPPLIER_NAME,
-                ProductEntry.COLUMN_SUPPLIER_PHONE,
-        };
+                Uri currentProductUri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id);
+                editProductIntent.setData(currentProductUri);
 
-        Cursor cursor = db.query(ProductEntry.TABLE_NAME,
-                projection,
-                null,
-                null,
-                null,
-                null,
-                null);
-
-        try {
-            // Create a table's number of records title and the header.
-//            dataBaseInfoTextView.setText(String.format("%s %d %s", getString(R.string.table_contains), cursor.getCount(), getString(R.string.products)));
-//            dataBaseInfoTextView.append(ProductEntry._ID + " - " +
-//            ProductEntry.COLUMN_PRODUCT_NAME + " - " +
-//            ProductEntry.COLUMN_PRODUCT_PRICE + " - " +
-//            ProductEntry.COLUMN_PRODUCT_QUANTITY + " - " +
-//            ProductEntry.COLUMN_SUPPLIER_NAME + " - " +
-//            ProductEntry.COLUMN_SUPPLIER_PHONE + "\n");
-
-            // Match the index of each column
-            int idColumnIndex = cursor.getColumnIndex(ProductEntry._ID);
-            int productNameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_NAME);
-            int productPriceColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PRICE);
-            int productQuantityColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_QUANTITY);
-            int supplierNameColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_SUPPLIER_NAME);
-            int supplierPhoneColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_SUPPLIER_PHONE);
-
-            // Iterate through all the returned rows in the cursor, extract values and display them in the TextView
-            while (cursor.moveToNext()) {
-                int currentId = cursor.getInt(idColumnIndex);
-                String currentProductName = cursor.getString(productNameColumnIndex);
-                double currentProductPrice = cursor.getDouble(productPriceColumnIndex);
-                int currentProductQuantity = cursor.getInt(productQuantityColumnIndex);
-                String currentSupplierName = cursor.getString(supplierNameColumnIndex);
-                String currentSupplierPhone = cursor.getString(supplierPhoneColumnIndex);
-
-//                dataBaseInfoTextView.append("\n" + currentId + " - " +
-//                        currentProductName + " - " +
-//                        currentProductPrice + " - " +
-//                        currentProductQuantity + " - " +
-//                        currentSupplierName + " - " +
-//                        currentSupplierPhone);
+                startActivity(editProductIntent);
             }
-        } finally {
-            cursor.close();
-        }
+        });
+
+        getLoaderManager().initLoader(PET_LOADER, null, this);
     }
 
     private void insertDummyProduct() {
-        SQLiteDatabase db = mInventoryDbHelper.getWritableDatabase();
-
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
 
@@ -113,16 +73,19 @@ public class InventoryActivity extends AppCompatActivity {
         values.put(ProductEntry.COLUMN_SUPPLIER_NAME, "Apple");
         values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, "123-456-7890");
 
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(ProductEntry.TABLE_NAME, null, values);
+        Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
 
-        Log.v("InventoryActivity", "New row ID: " + newRowId);
+        Toast.makeText(this, "Dummy product saved.", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        displayDatabaseInfo();
+    private void deleteAllProducts() {
+        int rowsDeleted = getContentResolver().delete(ProductEntry.CONTENT_URI, null, null);
+
+        if (rowsDeleted > 0) {
+            Toast.makeText(this, R.string.action_delete_all_entries, Toast.LENGTH_SHORT).show();
+        }
+
+        Log.v("InventoryActivity", rowsDeleted + " rows deleted from inventory database.");
     }
 
     @OnClick(R.id.fab_add_inventory_item)
@@ -142,8 +105,60 @@ public class InventoryActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_insert_dummy_product:
                 insertDummyProduct();
-                displayDatabaseInfo();
+                return true;
+            case R.id.action_delete_all_products:
+                deleteAllProducts();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Instantiate and return a new Loader for the given ID.
+     *
+     * @param id   The ID whose loader is to be created.
+     * @param args Any arguments supplied by the caller.
+     * @return Return a new Loader instance that is ready to start loading.
+     */
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                ProductEntry._ID,
+                ProductEntry.COLUMN_PRODUCT_NAME,
+                ProductEntry.COLUMN_PRODUCT_PRICE,
+                ProductEntry.COLUMN_PRODUCT_QUANTITY
+        };
+
+        return new CursorLoader(this,
+                ProductEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
+    }
+
+    /**
+     * Called when a previously created loader has finished its load.  Note
+     * that normally an application is <em>not</em> allowed to commit fragment
+     * transactions while in this call, since it can happen after an
+     * activity's state is saved.
+     * @param loader The Loader that has finished.
+     * @param data   The data generated by the Loader.
+     */
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mProductCursorAdapter.swapCursor(data);
+    }
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.  The application should at this point
+     * remove any references it has to the Loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mProductCursorAdapter.swapCursor(null);
     }
 }
