@@ -51,7 +51,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent editProductIntent = new Intent(InventoryActivity.this, AddProductActivity.class);
+                Intent editProductIntent = new Intent(InventoryActivity.this, ProductEditorActivity.class);
 
                 Uri currentProductUri = ContentUris.withAppendedId(ProductEntry.CONTENT_URI, id);
                 editProductIntent.setData(currentProductUri);
@@ -90,7 +90,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
 
     @OnClick(R.id.fab_add_inventory_item)
     public void onFabClick(View view) {
-        Intent addProductIntent = new Intent(InventoryActivity.this, AddProductActivity.class);
+        Intent addProductIntent = new Intent(InventoryActivity.this, ProductEditorActivity.class);
         startActivity(addProductIntent);
     }
 
