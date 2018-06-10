@@ -31,5 +31,4 @@
             android:name=".data.InventoryProvider"
             android:exported="false" />
     </application>
-
 </manifest>

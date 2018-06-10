@@ -12,11 +12,13 @@ import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +28,7 @@ import com.example.android.inventoryapp.data.InventoryContract.ProductEntry;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ProductEditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -39,6 +42,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
     @BindView(R.id.add_supplier_name) TextView supplierNameTextView;
     private EditText mSupplierPhone;
     @BindView(R.id.add_supplier_phone) TextView supplierPhoneTextView;
+    @BindView(R.id.order_button) Button orderButton;
 
     private static final int PET_LOADER = 0;
     private Uri mCurrentProductUri;
@@ -55,7 +59,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_product);
+        setContentView(R.layout.activity_add_or_edit_product);
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
@@ -67,7 +71,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
             getLoaderManager().initLoader(PET_LOADER, null, this);
         } else {
             setTitle(getString(R.string.editor_activity_title_add_new_product));
-
+            orderButton.setVisibility(View.GONE);
             // Invalidate the options menu, so the "Delete" menu option can be hidden.
             // (It doesn't make sense to delete a pet that hasn't been created yet.)
             invalidateOptionsMenu();
@@ -84,7 +88,16 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         mProductQuantity.setOnTouchListener(mTouchListener);
         mSupplierName.setOnTouchListener(mTouchListener);
         mSupplierPhone.setOnTouchListener(mTouchListener);
+        mSupplierPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+    }
 
+    @OnClick(R.id.order_button)
+    public void onOrderButtonClick() {
+        if (mCurrentProductUri != null) {
+            Intent orderProductIntent = new Intent(Intent.ACTION_DIAL);
+            orderProductIntent.setData(Uri.parse("tel:" + mSupplierPhone.getText().toString().trim()));
+            startActivity(orderProductIntent);
+        }
     }
 
     /**
@@ -157,7 +170,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         return true;
     }
 
-    private boolean areAllFieldsInputted() {
+    private boolean areAllFieldsValid() {
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String prodName = mProductName.getText().toString().trim();
@@ -186,22 +199,22 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         return true;
     }
 
-    private void saveProduct(String prodName, String prodPrice, String prodQuantity, String supplName, String supplPhone) {
+    private void saveProduct(String productName, String productPrice, String productQuantity, String supplierName, String supplierPhone) {
         ContentValues values = new ContentValues();
 
-        values.put(ProductEntry.COLUMN_PRODUCT_NAME, prodName);
-        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, prodPrice);
+        values.put(ProductEntry.COLUMN_PRODUCT_NAME, productName);
+        values.put(ProductEntry.COLUMN_PRODUCT_PRICE, productPrice);
 
         // If the quantity is not provided by the user, don't try to parse the string into an
         // integer value. Use 0 by default.
         int quantity = 0;
-        if (!TextUtils.isEmpty(prodQuantity)) {
-            quantity = Integer.parseInt(prodQuantity);
+        if (!TextUtils.isEmpty(productQuantity)) {
+            quantity = Integer.parseInt(productQuantity);
         }
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantity);
 
-        values.put(ProductEntry.COLUMN_SUPPLIER_NAME, supplName);
-        values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, supplPhone);
+        values.put(ProductEntry.COLUMN_SUPPLIER_NAME, supplierName);
+        values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, supplierPhone);
 
         if (mCurrentProductUri == null) {
             Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
@@ -274,7 +287,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save_product:
-                areAllFieldsInputted();
+                areAllFieldsValid();
                 return true;
             case R.id.action_delete_product:
                 showDeleteConfirmationDialog();

@@ -71,11 +71,11 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         values.put(ProductEntry.COLUMN_PRODUCT_PRICE, 123.5);
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, 100);
         values.put(ProductEntry.COLUMN_SUPPLIER_NAME, "Apple");
-        values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, "123-456-7890");
+        values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, "12 345 67 89");
 
         Uri newUri = getContentResolver().insert(ProductEntry.CONTENT_URI, values);
 
-        Toast.makeText(this, "Dummy product saved.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.inventory_activity_message_dummy_product_save, Toast.LENGTH_SHORT).show();
     }
 
 

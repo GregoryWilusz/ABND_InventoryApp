@@ -112,8 +112,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/suppliers_phone_number"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:maxLength="12"
                 android:inputType="phone" />
+
+            <Button
+                android:id="@+id/order_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="@string/button_order_product"/>
 
         </LinearLayout>
 
