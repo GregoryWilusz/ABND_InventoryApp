@@ -115,8 +115,9 @@ public class InventoryProvider extends ContentProvider {
                 break;
             case PRODUCT_ID:
                 selection = ProductEntry._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri))};
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(ProductEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Delete not provided for uri " + uri);
         }
@@ -130,7 +131,33 @@ public class InventoryProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        final int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case PRODUCTS:
+                return updateProduct(uri, values, selection, selectionArgs);
+            case PRODUCT_ID:
+                selection = ProductEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return updateProduct(uri, values, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update not supported for: " + uri);
+        }
+    }
+
+    private int updateProduct(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+
+        if (values.size() == 0) {
+            return 0;
+        }
+
+        SQLiteDatabase database = mInventoryDbHelper.getWritableDatabase();
+        int rowsUpdated = database.update(ProductEntry.TABLE_NAME, values, selection, selectionArgs);
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsUpdated;
     }
 
     @Nullable

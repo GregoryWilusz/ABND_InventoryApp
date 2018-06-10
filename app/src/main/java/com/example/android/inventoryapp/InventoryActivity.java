@@ -41,10 +41,8 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         setContentView(R.layout.activity_inventory);
         ButterKnife.bind(this);
 
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-
         productListView.setEmptyView(emptyView);
+
         mProductCursorAdapter = new ProductCursorAdapter(this, null);
         productListView.setAdapter(mProductCursorAdapter);
 

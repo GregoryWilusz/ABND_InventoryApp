@@ -19,7 +19,6 @@
         </activity>
         <activity
             android:name=".ProductEditorActivity"
-            android:label="@string/add_product_label"
             android:theme="@style/EditorTheme"
             android:parentActivityName=".InventoryActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->

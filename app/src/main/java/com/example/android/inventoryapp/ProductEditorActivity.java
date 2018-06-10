@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -49,9 +50,15 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         Uri currentUri = intent.getData();
 
         if (currentUri != null) {
-            setTitle(getString(R.string.editor_activity_title));
+            setTitle(getString(R.string.editor_activity_title_edit_product));
             mCurrentProductUri = currentUri;
             getLoaderManager().initLoader(PET_LOADER, null, this);
+        } else {
+            setTitle(getString(R.string.editor_activity_title_add_new_product));
+
+            // Invalidate the options menu, so the "Delete" menu option can be hidden.
+            // (It doesn't make sense to delete a pet that hasn't been created yet.)
+            invalidateOptionsMenu();
         }
 
         mProductName = (EditText) productNameTextView;
@@ -62,12 +69,39 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
 
     }
 
+    /**
+     * Prepare the Screen's standard options menu to be displayed.  This is
+     * called right before the menu is shown, every time it is shown.  You can
+     * use this method to efficiently enable/disable items or otherwise
+     * dynamically modify the contents.
+     * <p>
+     * <p>The default implementation updates the system menu items based on the
+     * activity's state.  Deriving classes should always call through to the
+     * base class implementation.
+     *
+     * @param menu The options menu as last shown or first initialized by
+     *             onCreateOptionsMenu().
+     * @return You must return true for the menu to be displayed;
+     * if you return false it will not be shown.
+     * @see #onCreateOptionsMenu
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        if (mCurrentProductUri == null) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete_product);
+            menuItem.setVisible(false);
+        }
+        return true;
+    }
+
     private void saveProduct() {
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String prodName = mProductName.getText().toString().trim();
-        double prodPrice = Double.parseDouble(mProductPrice.getText().toString().trim());
-        int prodQuantity = Integer.parseInt(mProductQuantity.getText().toString().trim());
+        String prodPrice = mProductPrice.getText().toString().trim();
+        String prodQuantity = mProductQuantity.getText().toString().trim();
         String supplName = mSupplierName.getText().toString().trim();
         String supplPhone = mSupplierPhone.getText().toString().trim();
 
@@ -103,6 +137,18 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         }
     }
 
+    private void deleteProduct() {
+        if (mCurrentProductUri != null) {
+            int rowsDeleted = getContentResolver().delete(mCurrentProductUri, null, null);
+
+            if (rowsDeleted > 0) {
+                Toast.makeText(this, R.string.editor_activity_deleting_current_product_successful, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, R.string.editor_activity_deleting_current_product_failed, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_add_product_activity, menu);
@@ -117,7 +163,8 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
                 finish();
                 return true;
             case R.id.action_delete_product:
-                Toast.makeText(getApplicationContext(), "Will delete product", Toast.LENGTH_SHORT).show();
+                deleteProduct();
+                finish();
                 return true;
             case R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
@@ -172,8 +219,8 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data.moveToFirst()) {
             mProductName.setText(data.getString(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_NAME)));
-            mProductPrice.setText(String.valueOf(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_PRICE)));
-            mProductQuantity.setText(String.valueOf(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_QUANTITY)));
+            mProductPrice.setText(Float.toString(data.getFloat(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_PRICE))));
+            mProductQuantity.setText(Integer.toString(data.getInt(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_QUANTITY))));
             mSupplierName.setText(data.getString(data.getColumnIndexOrThrow(ProductEntry.COLUMN_SUPPLIER_NAME)));
             mSupplierPhone.setText(data.getString(data.getColumnIndexOrThrow(ProductEntry.COLUMN_SUPPLIER_PHONE)));
         }

@@ -5,7 +5,7 @@
     <string name="action_delete_all_products">Delete all product</string>
     <string name="save_product">Save</string>
     <string name="delete_product">Delete product</string>
-    <string name="add_product_label">Add new product</string>
+    <string name="editor_activity_title_add_new_product">Add new product</string>
     <string name="category_product">Product</string>
     <string name="product_name">Name</string>
     <string name="product_price">Price</string>
@@ -23,9 +23,12 @@
     <!-- Subtitle text for the empty view that prompts the user to add a product [CHAR LIMIT=50] -->
     <string name="empty_view_subtitle_text">Click on the "plus" button and get started by adding product.</string>
     <string name="action_delete_all_entries">Deleted all products</string>
-    <string name="editor_activity_title">Edit product</string>
+
+    <string name="editor_activity_title_edit_product">Edit product</string>
     <string name="editor_activity_saving_new_product_failed">Error with saving new product</string>
     <string name="editor_activity_saving_new_product_successful">New product saved</string>
     <string name="editor_activity_updating_current_product_failed">Error with updating current product</string>
     <string name="editor_activity_updating_current_product_successful">Product updated</string>
+    <string name="editor_activity_deleting_current_product_failed">Error with deleting current product</string>
+    <string name="editor_activity_deleting_current_product_successful">Product deleted</string>
 </resources>
