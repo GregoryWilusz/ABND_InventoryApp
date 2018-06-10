@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -156,7 +157,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         return true;
     }
 
-    private void saveProduct() {
+    private boolean areAllFieldsInputted() {
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String prodName = mProductName.getText().toString().trim();
@@ -165,11 +166,40 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         String supplName = mSupplierName.getText().toString().trim();
         String supplPhone = mSupplierPhone.getText().toString().trim();
 
+        // Check if this is supposed to be a new product and all the fields in the editor are blank
+        if (mCurrentProductUri == null && TextUtils.isEmpty(prodName) && TextUtils.isEmpty(prodPrice)
+                && TextUtils.isEmpty(prodQuantity) && TextUtils.isEmpty(prodQuantity)
+                && TextUtils.isEmpty(supplName) && TextUtils.isEmpty(supplPhone)) {
+            Toast.makeText(this, R.string.editor_activity_insert_product_empty, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        // Check if all the NOT NULL fields in the editor are blank. If yes, show the message to the user
+        // and don't proceed.
+        if ((mCurrentProductUri == null || mCurrentProductUri != null) && (TextUtils.isEmpty(prodName) || TextUtils.isEmpty(prodPrice)
+                || TextUtils.isEmpty(supplName) || TextUtils.isEmpty(supplPhone))) {
+            Toast.makeText(this, R.string.editor_activity_insert_not_null_fields, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        saveProduct(prodName, prodPrice, prodQuantity, supplName, supplPhone);
+        return true;
+    }
+
+    private void saveProduct(String prodName, String prodPrice, String prodQuantity, String supplName, String supplPhone) {
         ContentValues values = new ContentValues();
 
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, prodName);
         values.put(ProductEntry.COLUMN_PRODUCT_PRICE, prodPrice);
-        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, prodQuantity);
+
+        // If the quantity is not provided by the user, don't try to parse the string into an
+        // integer value. Use 0 by default.
+        int quantity = 0;
+        if (!TextUtils.isEmpty(prodQuantity)) {
+            quantity = Integer.parseInt(prodQuantity);
+        }
+        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+
         values.put(ProductEntry.COLUMN_SUPPLIER_NAME, supplName);
         values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, supplPhone);
 
@@ -180,6 +210,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
                 Toast.makeText(this, R.string.editor_activity_saving_new_product_failed, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, R.string.editor_activity_saving_new_product_successful, Toast.LENGTH_SHORT).show();
+                finish();
             }
         } else {
             // Otherwise this is an EXISTING pet, so update the pet with content URI: mCurrentPetUri
@@ -193,6 +224,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
                 Toast.makeText(this, R.string.editor_activity_updating_current_product_failed, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, R.string.editor_activity_updating_current_product_successful, Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
     }
@@ -242,8 +274,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save_product:
-                saveProduct();
-                finish();
+                areAllFieldsInputted();
                 return true;
             case R.id.action_delete_product:
                 showDeleteConfirmationDialog();

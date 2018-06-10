@@ -53,4 +53,7 @@
     <!-- Dialog button text for the option to keep editing the current product [CHAR LIMIT=20] -->
     <string name="keep_editing">Keep Editing</string>
 
+    <string name="editor_activity_insert_product_empty">Product hasn\'t been saved. Please fill in all fields</string>
+    <string name="editor_activity_insert_not_null_fields">Before inserting the product, make sure you filled in all fields</string>
+
 </resources>
