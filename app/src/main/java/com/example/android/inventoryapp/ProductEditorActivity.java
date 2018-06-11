@@ -212,7 +212,6 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
             quantity = Integer.parseInt(productQuantity);
         }
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantity);
-
         values.put(ProductEntry.COLUMN_SUPPLIER_NAME, supplierName);
         values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, supplierPhone);
 

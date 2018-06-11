@@ -57,5 +57,12 @@
     <string name="editor_activity_insert_not_null_fields">Before inserting the product, make sure you filled in all fields</string>
     <string name="button_order_product">Order product</string>
     <string name="inventory_activity_message_dummy_product_save">Dummy product saved</string>
+    <string name="list_item_quantity_label">Quantity:</string>
+    <string name="item_list_price_label_price">Price:</string>
+    <string name="item_list_price_label_currency">$ each</string>
+    <string name="item_list_product_label">Product:</string>
+    <string name="product_sold_successful">Product sold.</string>
+    <string name="product_sold_failed">There was a problem with selling the product</string>
+    <string name="product_out_of_stock">You have no more items to sell. Please get into details and order new pieces.</string>
 
 </resources>
