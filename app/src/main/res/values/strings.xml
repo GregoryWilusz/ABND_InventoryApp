@@ -64,5 +64,7 @@
     <string name="product_sold_successful">Product sold.</string>
     <string name="product_sold_failed">There was a problem with selling the product</string>
     <string name="product_out_of_stock">You have no more items to sell. Please get into details and order new pieces.</string>
+    <string name="editor_activity_quantity_amount_less_than_one">You cannot decrease or increase the amount by the value less than 1. Increase the value.</string>
+    <string name="change_quantity_by_label">Change quantity by:</string>
 
 </resources>

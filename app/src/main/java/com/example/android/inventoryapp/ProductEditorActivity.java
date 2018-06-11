@@ -20,6 +20,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,15 +35,25 @@ import butterknife.OnClick;
 public class ProductEditorActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private EditText mProductName;
-    @BindView(R.id.add_product_name) TextView productNameTextView;
+    @BindView(R.id.add_product_name) EditText productNameEditText;
     private EditText mProductPrice;
-    @BindView(R.id.add_product_price) TextView productPriceTextView;
+    @BindView(R.id.add_product_price) EditText productPriceEditText;
+
+    // Quantity related variables
     private EditText mProductQuantity;
-    @BindView(R.id.add_product_quantity) TextView productQuantityTextView;
+    @BindView(R.id.add_product_quantity) EditText productQuantityEditText;
+    private EditText mAmountToChangeQuantity;
+    @BindView(R.id.change_quantity_section_header) LinearLayout changeQuantitySectionHeader;
+    @BindView(R.id.change_quantity_section) RelativeLayout changeQuantitySection;
+    @BindView(R.id.decrease_increase_by_edit_text) EditText quantityToChangeEditText;
+    @BindView(R.id.button_decrease_quantity) Button decreaseQuantityButton;
+    @BindView(R.id.button_increase_quantity) Button increaseQuantityButton;
+
+    // Supplier's variables section
     private EditText mSupplierName;
-    @BindView(R.id.add_supplier_name) TextView supplierNameTextView;
+    @BindView(R.id.add_supplier_name) EditText supplierNameEditText;
     private EditText mSupplierPhone;
-    @BindView(R.id.add_supplier_phone) TextView supplierPhoneTextView;
+    @BindView(R.id.add_supplier_phone) EditText supplierPhoneEditText;
     @BindView(R.id.order_button) Button orderButton;
 
     private static final int PET_LOADER = 0;
@@ -72,20 +84,24 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         } else {
             setTitle(getString(R.string.editor_activity_title_add_new_product));
             orderButton.setVisibility(View.GONE);
+            changeQuantitySectionHeader.setVisibility(View.GONE);
+            changeQuantitySection.setVisibility(View.GONE);
             // Invalidate the options menu, so the "Delete" menu option can be hidden.
             // (It doesn't make sense to delete a pet that hasn't been created yet.)
             invalidateOptionsMenu();
         }
 
-        mProductName = (EditText) productNameTextView;
-        mProductPrice = (EditText) productPriceTextView;
-        mProductQuantity = (EditText) productQuantityTextView;
-        mSupplierName = (EditText) supplierNameTextView;
-        mSupplierPhone = (EditText) supplierPhoneTextView;
+        mProductName = productNameEditText;
+        mProductPrice = productPriceEditText;
+        mProductQuantity = productQuantityEditText;
+        mAmountToChangeQuantity = quantityToChangeEditText;
+        mSupplierName = supplierNameEditText;
+        mSupplierPhone = supplierPhoneEditText;
 
         mProductName.setOnTouchListener(mTouchListener);
         mProductPrice.setOnTouchListener(mTouchListener);
         mProductQuantity.setOnTouchListener(mTouchListener);
+        mAmountToChangeQuantity.setOnTouchListener(mTouchListener);
         mSupplierName.setOnTouchListener(mTouchListener);
         mSupplierPhone.setOnTouchListener(mTouchListener);
         mSupplierPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
@@ -176,6 +192,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         String prodName = mProductName.getText().toString().trim();
         String prodPrice = mProductPrice.getText().toString().trim();
         String prodQuantity = mProductQuantity.getText().toString().trim();
+        String quantityAmount = mAmountToChangeQuantity.getText().toString().trim();
         String supplName = mSupplierName.getText().toString().trim();
         String supplPhone = mSupplierPhone.getText().toString().trim();
 
@@ -195,11 +212,11 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
             return false;
         }
 
-        saveProduct(prodName, prodPrice, prodQuantity, supplName, supplPhone);
+        saveProduct(prodName, prodPrice, prodQuantity, quantityAmount, supplName, supplPhone);
         return true;
     }
 
-    private void saveProduct(String productName, String productPrice, String productQuantity, String supplierName, String supplierPhone) {
+    private void saveProduct(String productName, String productPrice, String productQuantity, String quantityAmount, String supplierName, String supplierPhone) {
         ContentValues values = new ContentValues();
 
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, productName);
@@ -211,7 +228,13 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         if (!TextUtils.isEmpty(productQuantity)) {
             quantity = Integer.parseInt(productQuantity);
         }
+        int quantityAmountNumber = 1;
+        if(!TextUtils.isEmpty(quantityAmount)) {
+            quantityAmountNumber = Integer.parseInt(quantityAmount);
+        }
+
         values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+        values.put(ProductEntry.COLUMN_PRODUCT_QUANTITY_AMOUNT, quantityAmountNumber);
         values.put(ProductEntry.COLUMN_SUPPLIER_NAME, supplierName);
         values.put(ProductEntry.COLUMN_SUPPLIER_PHONE, supplierPhone);
 
@@ -239,6 +262,26 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
                 finish();
             }
         }
+    }
+
+    @OnClick(R.id.button_decrease_quantity)
+    public void onDecreaseQuantityButtonClick(View view) {
+        int totalAmount = Integer.parseInt(mProductQuantity.getText().toString().trim());
+        int amountToDecrease = Integer.parseInt(mAmountToChangeQuantity.getText().toString().trim());
+        int result = totalAmount - amountToDecrease;
+        if (result > 0) {
+            mProductQuantity.setText(Integer.toString(result));
+        } else {
+            Toast.makeText(this, "Amount value cannot be less than 0", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @OnClick(R.id.button_increase_quantity)
+    public void onIncreaseQuantityButtonClick(View view) {
+        int totalAmount = Integer.parseInt(mProductQuantity.getText().toString().trim());
+        int amountToDecrease = Integer.parseInt(mAmountToChangeQuantity.getText().toString().trim());
+        int result = totalAmount + amountToDecrease;
+        mProductQuantity.setText(Integer.toString(result));
     }
 
     private void showDeleteConfirmationDialog() {
@@ -323,6 +366,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
                 ProductEntry.COLUMN_PRODUCT_NAME,
                 ProductEntry.COLUMN_PRODUCT_PRICE,
                 ProductEntry.COLUMN_PRODUCT_QUANTITY,
+                ProductEntry.COLUMN_PRODUCT_QUANTITY_AMOUNT,
                 ProductEntry.COLUMN_SUPPLIER_NAME,
                 ProductEntry.COLUMN_SUPPLIER_PHONE
         };
@@ -357,6 +401,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
             mProductName.setText(data.getString(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_NAME)));
             mProductPrice.setText(Float.toString(data.getFloat(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_PRICE))));
             mProductQuantity.setText(Integer.toString(data.getInt(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_QUANTITY))));
+            mAmountToChangeQuantity.setText(Integer.toString(data.getInt(data.getColumnIndexOrThrow(ProductEntry.COLUMN_PRODUCT_QUANTITY_AMOUNT))));
             mSupplierName.setText(data.getString(data.getColumnIndexOrThrow(ProductEntry.COLUMN_SUPPLIER_NAME)));
             mSupplierPhone.setText(data.getString(data.getColumnIndexOrThrow(ProductEntry.COLUMN_SUPPLIER_PHONE)));
         }

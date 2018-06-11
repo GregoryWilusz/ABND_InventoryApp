@@ -21,9 +21,9 @@ import com.example.android.inventoryapp.data.InventoryContract.ProductEntry;
 
 public class ProductCursorAdapter extends CursorAdapter {
 
-//    @BindView(R.id.product_name_text_view) TextView productNameTextView;
-//    @BindView(R.id.product_price_text_view) TextView productPriceTextView;
-//    @BindView(R.id.product_quantity_text_view) TextView productQuantityTextView;
+//    @BindView(R.id.product_name_text_view) TextView productNameEditText;
+//    @BindView(R.id.product_price_text_view) TextView productPriceEditText;
+//    @BindView(R.id.product_quantity_text_view) TextView productQuantityEditText;
 
     /**
      * Recommended constructor.
@@ -60,10 +60,10 @@ public class ProductCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, final Context context, final Cursor cursor) {
 
-        TextView productNameTextView = (TextView) view.findViewById(R.id.product_name_text_view);
-        TextView productPriceTextView = (TextView) view.findViewById(R.id.product_price_text_view);
-        TextView productQuantityTextView = (TextView) view.findViewById(R.id.product_quantity_text_view);
-        Button sellButton = (Button) view.findViewById(R.id.sell_button);
+        TextView productNameTextView = view.findViewById(R.id.product_name_text_view);
+        TextView productPriceTextView = view.findViewById(R.id.product_price_text_view);
+        TextView productQuantityTextView = view.findViewById(R.id.product_quantity_text_view);
+        Button sellButton = view.findViewById(R.id.sell_button);
 
         String productName = cursor.getString(cursor.getColumnIndexOrThrow("productName"));
         String productPrice = String.valueOf(cursor.getFloat(cursor.getColumnIndexOrThrow("productPrice")));

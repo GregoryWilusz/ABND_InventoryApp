@@ -85,6 +85,7 @@ public class InventoryProvider extends ContentProvider {
         String productName = values.getAsString(ProductEntry.COLUMN_PRODUCT_NAME);
         float productPrice = values.getAsFloat(ProductEntry.COLUMN_PRODUCT_PRICE);
         Integer productQuantity = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY);
+        Integer quantityAmount = values.getAsInteger(ProductEntry.COLUMN_PRODUCT_QUANTITY_AMOUNT);
         String supplierName = values.getAsString(ProductEntry.COLUMN_SUPPLIER_NAME);
         String supplierPhone = values.getAsString(ProductEntry.COLUMN_SUPPLIER_PHONE);
 
