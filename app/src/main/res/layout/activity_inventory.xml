@@ -13,24 +13,24 @@
     <!-- Empty view for the list view -->
     <RelativeLayout
         android:id="@+id/empty_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
 
         <TextView
             android:id="@+id/empty_view_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:fontFamily="sans-serif-medium"
             android:text="@string/empty_view_title_text"/>
 
         <TextView
             android:id="@+id/empty_view_subtitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:paddingTop="@dimen/label_padding"
             android:layout_below="@+id/empty_view_title"

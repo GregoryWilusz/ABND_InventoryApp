@@ -5,6 +5,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +18,14 @@ import android.widget.Toast;
 
 import com.example.android.inventoryapp.data.InventoryContract.ProductEntry;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by grzegorzwilusz on 6/8/18.
  */
 
 public class ProductCursorAdapter extends CursorAdapter {
-
-//    @BindView(R.id.product_name_text_view) TextView productNameEditText;
-//    @BindView(R.id.product_price_text_view) TextView productPriceEditText;
-//    @BindView(R.id.product_quantity_text_view) TextView productQuantityEditText;
 
     /**
      * Recommended constructor.
@@ -59,22 +61,34 @@ public class ProductCursorAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, final Context context, final Cursor cursor) {
-
-        TextView productNameTextView = view.findViewById(R.id.product_name_text_view);
-        TextView productPriceTextView = view.findViewById(R.id.product_price_text_view);
-        TextView productQuantityTextView = view.findViewById(R.id.product_quantity_text_view);
-        Button sellButton = view.findViewById(R.id.sell_button);
+        ViewHolder holder = new ViewHolder(view);
 
         String productName = cursor.getString(cursor.getColumnIndexOrThrow("productName"));
+        Spannable spanProdName = new SpannableString(productName);
+        spanProdName.setSpan(new ForegroundColorSpan(context.getColor(R.color.colorAccent)), 0, productName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         String productPrice = String.valueOf(cursor.getFloat(cursor.getColumnIndexOrThrow("productPrice")));
+        Spannable spanProdPrice = new SpannableString(productPrice);
+        spanProdPrice.setSpan(new ForegroundColorSpan(context.getColor(R.color.colorAccent)), 0, productPrice.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         final int productQuantity = cursor.getInt(cursor.getColumnIndexOrThrow("productQuantity"));
+        String productQuantityString = String.valueOf(productQuantity);
+        Spannable spanProdQuantity = new SpannableString(productQuantityString);
+        spanProdQuantity.setSpan(new ForegroundColorSpan(context.getColor(R.color.colorAccent)), 0, productQuantityString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         final int productId = cursor.getInt(cursor.getColumnIndexOrThrow(ProductEntry._ID));
 
-        productNameTextView.setText(String.format("%s %s", context.getString(R.string.item_list_product_label), productName));
-        productPriceTextView.setText(String.format("%s %s %s", context.getString(R.string.item_list_price_label_price), productPrice, context.getString(R.string.item_list_price_label_currency)));
-        productQuantityTextView.setText(String.format("%s %d", context.getString(R.string.list_item_quantity_label), productQuantity));
+        holder.productNameTextView.setText(new StringBuilder().append(context.getString(R.string.item_list_product_label)).append(" ").toString());
+        holder.productNameTextView.append(spanProdName);
 
-        sellButton.setOnClickListener(new View.OnClickListener() {
+        holder.productPriceTextView.setText(new StringBuilder().append(context.getString(R.string.item_list_price_label_price)).append(" ").toString());
+        holder.productPriceTextView.append(spanProdPrice);
+        holder.productPriceTextView.append(context.getString(R.string.item_list_price_label_currency));
+
+        holder.productQuantityTextView.setText(new StringBuilder().append(context.getString(R.string.list_item_quantity_label)).append(" ").toString());
+        holder.productQuantityTextView.append(spanProdQuantity);
+
+        holder.sellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (productQuantity > 0) {
@@ -99,5 +113,14 @@ public class ProductCursorAdapter extends CursorAdapter {
         });
     }
 
+    static class ViewHolder {
+        @BindView(R.id.product_name_text_view) TextView productNameTextView;
+        @BindView(R.id.product_price_text_view) TextView productPriceTextView;
+        @BindView(R.id.product_quantity_text_view) TextView productQuantityTextView;
+        @BindView(R.id.sell_button) Button sellButton;
 
+        public ViewHolder(View view){
+            ButterKnife.bind(this, view);
+        }
+    }
 }

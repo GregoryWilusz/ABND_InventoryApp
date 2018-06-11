@@ -64,7 +64,15 @@
     <string name="product_sold_successful">Product sold.</string>
     <string name="product_sold_failed">There was a problem with selling the product</string>
     <string name="product_out_of_stock">You have no more items to sell. Please get into details and order new pieces.</string>
-    <string name="editor_activity_quantity_amount_less_than_one">You cannot decrease or increase the amount by the value less than 1. Increase the value.</string>
     <string name="change_quantity_by_label">Change quantity by:</string>
+    <string name="amount_less_than_zero">Amount value cannot be less than 0</string>
+    <string name="insertion_not_supported">Insertion not supported for</string>
+    <string name="insertion_failed">Failed to insert row</string>
+    <string name="delete_not_supported">Delete not provided for uri</string>
+    <string name="update_not_supported">Update not supported for:</string>
+    <string name="unknown_uri">Unknown URI</string>
+    <string name="with_match">with match</string>
+    <string name="cannot_query_unknown_uri">Cannot query unknown URI</string>
+    <string name="sell_button">sell</string>
 
 </resources>

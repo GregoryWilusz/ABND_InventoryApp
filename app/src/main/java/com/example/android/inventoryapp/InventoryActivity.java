@@ -37,6 +37,26 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     private static final int PET_LOADER = 0;
     ProductCursorAdapter mProductCursorAdapter;
 
+    /**
+     * Prepare the Screen's standard options menu to be displayed.  This is
+     * called right before the menu is shown, every time it is shown.  You can
+     * use this method to efficiently enable/disable items or otherwise
+     * dynamically modify the contents.
+     *
+     * @param menu The options menu as last shown or first initialized by
+     *             onCreateOptionsMenu().
+     * @return You must return true for the menu to be displayed;
+     * if you return false it will not be shown.
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (productListView.getAdapter().getCount() == 0) {
+            MenuItem menuItem = menu.findItem(R.id.action_delete_all_products);
+            menuItem.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -170,6 +190,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        invalidateOptionsMenu();
         mProductCursorAdapter.swapCursor(data);
     }
 

@@ -22,7 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -272,7 +271,7 @@ public class ProductEditorActivity extends AppCompatActivity implements LoaderMa
         if (result > 0) {
             mProductQuantity.setText(Integer.toString(result));
         } else {
-            Toast.makeText(this, "Amount value cannot be less than 0", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.amount_less_than_zero, Toast.LENGTH_SHORT).show();
         }
     }
 

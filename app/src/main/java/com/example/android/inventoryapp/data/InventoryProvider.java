@@ -1,5 +1,6 @@
 package com.example.android.inventoryapp.data;
 
+import com.example.android.inventoryapp.R;
 import com.example.android.inventoryapp.data.InventoryContract.ProductEntry;
 
 import android.content.ContentProvider;
@@ -57,7 +58,7 @@ public class InventoryProvider extends ContentProvider {
                 cursor = database.query(ProductEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             default:
-                throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+                throw new IllegalArgumentException(getContext().getString(R.string.cannot_query_unknown_uri) + uri);
         }
 
         // Set notification URI on the Cursor,
@@ -76,7 +77,7 @@ public class InventoryProvider extends ContentProvider {
             case PRODUCTS:
                 return insertProduct(uri, values);
             default:
-                throw new IllegalArgumentException("Insertion not supported for " + uri);
+                throw new IllegalArgumentException(getContext().getString(R.string.insertion_not_supported) + uri);
         }
     }
 
@@ -94,7 +95,7 @@ public class InventoryProvider extends ContentProvider {
         long id = database.insert(ProductEntry.TABLE_NAME, null, values);
 
         if (id == -1) {
-            Log.e(LOG_TAG, "Failed to insert row " + uri);
+            Log.e(LOG_TAG, getContext().getString(R.string.insertion_failed) + uri);
             return null;
         }
 
@@ -120,7 +121,7 @@ public class InventoryProvider extends ContentProvider {
                 rowsDeleted = database.delete(ProductEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
-                throw new IllegalArgumentException("Delete not provided for uri " + uri);
+                throw new IllegalArgumentException(getContext().getString(R.string.delete_not_supported) + uri);
         }
 
         if (rowsDeleted != 0) {
@@ -142,7 +143,7 @@ public class InventoryProvider extends ContentProvider {
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return updateProduct(uri, values, selection, selectionArgs);
             default:
-                throw new IllegalArgumentException("Update not supported for: " + uri);
+                throw new IllegalArgumentException(getContext().getString(R.string.update_not_supported) + uri);
         }
     }
 
@@ -172,7 +173,7 @@ public class InventoryProvider extends ContentProvider {
             case PRODUCT_ID:
                 return ProductEntry.CONTENT_ITEM_TYPE;
             default:
-                throw new IllegalArgumentException("Unknown URI " + uri + " with match " + match);
+                throw new IllegalArgumentException(getContext().getString(R.string.unknown_uri) + uri + getContext().getString(R.string.with_match) + match);
         }
     }
 }
